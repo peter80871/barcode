@@ -36,6 +36,11 @@ class NewConnection():
 
         return self.cursor.fetchall()
 
+    def show_user_search(self, user_id):
+        self.cursor.execute(f"select last_search from users where user_id = {user_id}")
+
+        return self.cursor.fetchall()
+
     def new_user_position(self, user_id, position):
         self.cursor.execute(f"update user_position set position = '{position}' where user_id = {user_id}")
 
@@ -71,7 +76,7 @@ class NewConnection():
             if self.cursor is not None:
                 css = self.cursor.fetchall()
                 for cs in css:
-                    shops_and_coast.append((f'{market[2]} - {cs[2]}р', market[4]))
+                    shops_and_coast.append((f'{market[2]}:{cs[2]}р', market[4]))
 
         return shops_and_coast
 
@@ -81,15 +86,20 @@ class NewConnection():
         markets = self.cursor.fetchall()
 
     # function for bot
-    def add_new_user(self, user_id, user_name, city):
-        self.cursor.execute('insert into users (user_id, user_name, city) values (%s, %s, %s)',
-                            (user_id, user_name, city))
+    def add_new_user(self, user_id, user_name, city, last_search):
+        self.cursor.execute('insert into users (user_id, user_name, city, last_search) values (%s, %s, %s, %s)',
+                            (user_id, user_name, city, last_search))
         self.cursor.execute("insert into user_position (user_id, position) values (%s, %s)",
                             (user_id, 'main'))
         self.conn.commit()
 
     def add_user_city(self, user_id, user_name, city):
         self.cursor.execute(f"update users set city = '{city}' where user_id = {user_id}")
+
+        self.conn.commit()
+
+    def new_user_search(self, user_id, search):
+        self.cursor.execute(f"update users set last_search = '{search}' where user_id = {user_id}")
 
         self.conn.commit()
 
@@ -128,16 +138,15 @@ class NewConnection():
         self.conn.commit()
 
     def create_tables(self):
-        pass
-        # self.cursor.execute('create table users (user_id int, user_name varchar(30), city varchar(30))')
-        # self.cursor.execute('create table users_card (card bigint, balance int)')
+        self.cursor.execute('create table users (user_id int, user_name varchar(30), city varchar(30))')
+        self.cursor.execute('create table users_card (card bigint, balance int)')
 
-        # self.cursor.execute('create table products (barcode bigint, title varchar(100), description text)')
-        # self.cursor.execute('create table products_photo (barcode bigint, product_image blob)')
+        self.cursor.execute('create table products (barcode bigint, title varchar(100), description text)')
+        self.cursor.execute('create table products_photo (barcode bigint, product_image blob)')
 
-        # self.cursor.execute('create table shops (id int, name varchar(40), address varchar(70), city varchar(20))')
-        # self.cursor.execute('create table products_in_shops (id_shop int, product_barcode bigint, coast float, quantity int)')
-        # self.cursor.execute('create table user_position (user_id int, position varchar(20))')
+        self.cursor.execute('create table shops (id int, name varchar(40), address varchar(70), city varchar(20))')
+        self.cursor.execute('create table products_in_shops (id_shop int, product_barcode bigint, coast float, quantity int)')
+        self.cursor.execute('create table user_position (user_id int, position varchar(20))')
 
 
 # a = NewConnection().new_url('https://yandex.ru/maps/org/okean/48819044748/?ll=124.709884%2C56.662294&z=17.58', 0)
