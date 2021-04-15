@@ -1,7 +1,7 @@
 import mysql.connector
 
 
-class NewConnection():
+class Users:
     def __init__(self):
         self.conn = mysql.connector.connect(
             host="localhost",
@@ -41,49 +41,15 @@ class NewConnection():
 
         return self.cursor.fetchall()
 
-    def new_user_position(self, user_id, position):
-        self.cursor.execute(f"update user_position set position = '{position}' where user_id = {user_id}")
-
-        self.conn.commit()
-
-    def new_url(self, url, id):
-        self.cursor.execute(f"update shops set urls = '{url}' where id = {id}")
-
-        self.conn.commit()
-
     def show_balance(self, card):
         self.cursor.execute(f"select balance from users_card where card = {card}")
 
         return self.cursor.fetchall()
 
-    # return products barcode, title, description
-    def show_products(self):
-        self.cursor.execute("select * from products;")
+    def new_user_position(self, user_id, position):
+        self.cursor.execute(f"update user_position set position = '{position}' where user_id = {user_id}")
 
-        return self.cursor.fetchall()
-
-    # return products id market, barcode, coast, quantity
-    def show_products_in_shops(self, barcode, city):
-        self.cursor.execute(f"select * from shops where city = '{city}'")
-
-        markets = self.cursor.fetchall()
-        shops_and_coast = []
-
-        for market in markets:
-            self.cursor.execute(f"select * from products_in_shops where product_barcode = {barcode} and id_shop = {market[0]}")
-
-            # add shop street and coast
-            if self.cursor is not None:
-                css = self.cursor.fetchall()
-                for cs in css:
-                    shops_and_coast.append((f'{market[2]}:{cs[2]}р', market[4]))
-
-        return shops_and_coast
-
-    def show_url_shop(self, id):
-        self.cursor.execute(f"select urls from shops where id = {id}")
-
-        markets = self.cursor.fetchall()
+        self.conn.commit()
 
     # function for bot
     def add_new_user(self, user_id, user_name, city, last_search):
@@ -102,6 +68,57 @@ class NewConnection():
         self.cursor.execute(f"update users set last_search = '{search}' where user_id = {user_id}")
 
         self.conn.commit()
+
+
+class Products:
+    def __init__(self):
+        self.conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="Pe8t9i1a",
+            database="test"
+        )
+
+        self.cursor = self.conn.cursor()
+
+    def new_url(self, url, id):
+        self.cursor.execute(f"update shops set urls = '{url}' where id = {id}")
+
+        self.conn.commit()
+
+    # return products barcode, title, description
+    def show_products(self):
+        self.cursor.execute("select * from products;")
+
+        return self.cursor.fetchall()
+
+    def show_shops_address(self):
+        self.cursor.execute("select * from shops;")
+
+        return self.cursor.fetchall()
+
+    # return products id market, barcode, coast, quantity
+    def show_products_in_shops(self, barcode, city):
+        self.cursor.execute(f"select * from shops where city = '{city}'")
+
+        markets = self.cursor.fetchall()
+        shops_and_coast = []
+
+        for market in markets:
+            self.cursor.execute(f"select * from products_in_shops where product_barcode = {barcode} and id_shop = {market[0]}")
+
+            # add shop street and coast
+            if self.cursor is not None:
+                css = self.cursor.fetchall()
+                for cs in css:
+                    shops_and_coast.append((f'{market[2]}:{cs[2]}', market[4]))
+
+        return shops_and_coast
+
+    def show_url_shop(self, id):
+        self.cursor.execute(f"select urls from shops where id = {id}")
+
+        markets = self.cursor.fetchall()
 
     # append product
     def add_new_product(self, barcode, title, description):
@@ -149,9 +166,9 @@ class NewConnection():
         self.cursor.execute('create table user_position (user_id int, position varchar(20))')
 
 
-# a = NewConnection().new_url('https://yandex.ru/maps/org/okean/48819044748/?ll=124.709884%2C56.662294&z=17.58', 0)
-# print(a.new_user_position())
-# a.add_new_product(4605246001970, 'Принцесса Нури Чор.Високогир 25пак', 'Принцесса Нури\nМягкий гармоничный вкус и приятный свежий аромат – вот что ждут ценители от цейлонского чая. Идеальное воплощение этих ожиданий – чай «Принцесса Нури».')
-# a.add_photo_product(4605246001970, )
-# a.add_shop(2, 'Название магазина', 'Ленина 2', 'Алдан')
+# EXAMPLES
+# new_product = Products()
+# new_product.new_url('https://yandex.ru/maps/org/okean/48819044748/?ll=124.709884%2C56.662294&z=17.58', 0)
+# new_product.add_new_product(4605246001970, 'Принцесса Нури Чор.Високогир 25пак', 'Принцесса Нури\nМягкий гармоничный вкус и приятный свежий аромат – вот что ждут ценители от цейлонского чая. Идеальное воплощение этих ожиданий – чай «Принцесса Нури».')
+# new_product.add_shop(2, 'Название магазина', 'Ленина 2', 'Алдан')
 
