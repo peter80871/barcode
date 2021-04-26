@@ -59,7 +59,7 @@ class Users:
                             (user_id, 'main'))
         self.conn.commit()
 
-    def add_user_city(self, user_id, user_name, city):
+    def add_user_city(self, user_id, city):
         self.cursor.execute(f"update users set city = '{city}' where user_id = {user_id}")
 
         self.conn.commit()

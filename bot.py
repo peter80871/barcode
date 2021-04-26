@@ -171,7 +171,7 @@ def query_handler(call):
     # print(user.show_user_position(call.message.chat.id)[0][0], call.data, call.message.chat.id)
 
     if user.show_user_position(call.message.chat.id)[0][0] == 'new_city' and call.data in cities:
-        user.add_user_city(call.message.chat.id, call.message.from_user.first_name, call.data)  # update row city in 'users'
+        user.add_user_city(call.message.chat.id, call.data)  # update row city in 'users'
         user.new_user_position(call.message.chat.id, 'main')     # update row position in 'user_position'
         bot.send_message(call.message.chat.id, 'Город изменен')
 
