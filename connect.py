@@ -6,7 +6,7 @@ class Users:
         self.conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="Pe8t9i1a",
+            password="Pe8t9i!a",
             database="test"
         )
         self.cursor = self.conn.cursor()
@@ -75,7 +75,7 @@ class Products:
         self.conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="Pe8t9i1a",
+            password="Pe8t9i!a",
             database="test"
         )
         self.cursor = self.conn.cursor()
